@@ -31,21 +31,17 @@ def ejecutar_solver():
         return
 
     try:
-        # Leer datos del archivo de entrada
         datos = read_input(archivo_entrada)
 
-        # Cargar el modelo de MiniZinc
         modelo = minizinc.Model("models/implementation.mzn")
-        modelo.add_file("models/utils/earnings_function.mzn")  # Incluye funciones adicionales
+        modelo.add_file("models/utils/earnings_function.mzn")  
 
-        # Configurar solver
         solver = Solver.lookup(solver_nombre.lower())
         if solver is None:
             messagebox.showerror("Error", f"No se encontró el solver: {solver_nombre}")
             return
         instancia = Instance(solver, modelo)
 
-        # Pasar los datos al modelo
         instancia["num_of_established"] = datos["num_of_established"]
         instancia["x_coordinates"] = datos["x_coordinates"]
         instancia["y_coordinates"] = datos["y_coordinates"]
@@ -54,11 +50,9 @@ def ejecutar_solver():
         instancia["business_environment"] = datos["business_environment"]
         instancia["num_programs"] = datos["num_programs"]
 
-        # Resolver el modelo
         resultado = instancia.solve()
 
         if resultado.status is not None:
-            # Mostrar resultados en la interfaz
             resultado_text.set(str(resultado.solution))
         else:
             messagebox.showinfo("Sin solución", "No se encontró una solución para los datos proporcionados.")
@@ -79,17 +73,14 @@ def guardar_resultado():
         except Exception as e:
             messagebox.showerror("Error", f"Ocurrió un error al guardar el archivo: {e}")
 
-# Configuración de la ventana principal
 ventana = ttk.Window(themename="journal")
 ventana.title("Interfaz MiniZinc")
 ventana.geometry("1000x800")
 
-# Variables
 entrada_var = ttk.StringVar()
 solver_var = ttk.StringVar()
 resultado_text = ttk.StringVar()
 
-# Widgets
 lbl_entrada = ttk.Label(ventana, text="Archivo de entrada:", bootstyle="secondary")
 lbl_entrada.pack(pady=5)
 
