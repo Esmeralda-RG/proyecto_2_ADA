@@ -33,8 +33,8 @@ def ejecutar_solver():
     try:
         datos = read_input(archivo_entrada)
 
-        modelo = minizinc.Model("models/final_model.mzn")
-        modelo.add_file("models/utils/profit_functions.mzn")
+        modelo = minizinc.Model("models/final_models.mzn")
+        modelo.add_file("models/utils/profit_function.mzn")
 
         solver = Solver.lookup(solver_nombre.lower())
         if solver is None:
