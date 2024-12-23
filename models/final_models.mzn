@@ -2,7 +2,7 @@ include "utils/profit_function.mzn";
 include "model_variables.mzn";
 include "utils/contiguous_coordinates.mzn";
 
-array[1..num_of_established] of int: initial_earnings = [
+array[1..num_of_established] of int: initial_profit = [
     get_profit_coordinate(x_coordinates[i], y_coordinates[i], n, population_segment, business_environment) | i in 1..num_of_established
 ];
 
@@ -22,7 +22,7 @@ constraint
 
 
 output [
-    "1. Ganancia total: " ++ show(sum(initial_earnings)) ++ "\n" ++
+    "1. Ganancia total: " ++ show(sum(initial_profit)) ++ "\n" ++
     "3. Coordenadas de localizaciones anteriores:\n" ++
     concat([ show(x_coordinates[i]) ++ " " ++ show(y_coordinates[i]) ++ "\n" | i in 1..num_of_established]) ++ 
     "4. Localizaciones predeterminadas:\n" ++
