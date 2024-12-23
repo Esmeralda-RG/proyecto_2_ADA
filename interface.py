@@ -6,6 +6,7 @@ import minizinc
 from minizinc import Model, Solver, Instance
 from utils.input_handler import read_input
 
+# Funciones de la interfaz
 def seleccionar_archivo():
     archivo = filedialog.askopenfilename(
         title="Seleccionar archivo de entrada",
@@ -21,7 +22,6 @@ def ejecutar_solver():
     print(f"Archivo de entrada: {entrada_var.get()}")
     print(f"Solver seleccionado: {solver_var.get()}")
 
-
     if not archivo_entrada:
         messagebox.showwarning("Advertencia", "Seleccione un archivo de entrada.")
         return
@@ -34,7 +34,7 @@ def ejecutar_solver():
         datos = read_input(archivo_entrada)
 
         modelo = minizinc.Model("models/implementation.mzn")
-        modelo.add_file("models/utils/earnings_function.mzn")  
+        modelo.add_file("models/utils/earnings_function.mzn")
 
         solver = Solver.lookup(solver_nombre.lower())
         if solver is None:
@@ -54,6 +54,8 @@ def ejecutar_solver():
 
         if resultado.status is not None:
             resultado_text.set(str(resultado.solution))
+            resultado_textbox.delete(1.0, tk.END)  # Limpiar el texto anterior
+            resultado_textbox.insert(tk.END, str(resultado.solution))  # Mostrar el nuevo resultado
         else:
             messagebox.showinfo("Sin solución", "No se encontró una solución para los datos proporcionados.")
     except Exception as e:
@@ -68,11 +70,12 @@ def guardar_resultado():
     if archivo_salida:
         try:
             with open(archivo_salida, "w") as f:
-                f.write(resultado_text.get())
+                f.write(resultado_textbox.get(1.0, tk.END).strip())
             messagebox.showinfo("Guardado exitoso", "El resultado se guardó en: " + archivo_salida)
         except Exception as e:
             messagebox.showerror("Error", f"Ocurrió un error al guardar el archivo: {e}")
 
+# Configuración de la ventana principal
 ventana = ttk.Window(themename="journal")
 ventana.title("Interfaz MiniZinc")
 ventana.geometry("1000x800")
@@ -102,8 +105,17 @@ btn_ejecutar.pack(pady=10)
 lbl_resultado = ttk.Label(ventana, text="Resultado:", bootstyle="secondary")
 lbl_resultado.pack(pady=5)
 
-resultado_label = tk.Label(ventana, textvariable=resultado_text, bg="#FFF0F0", relief="solid", width=80, height=20, anchor="nw", justify="left", wraplength=900)
-resultado_label.pack(pady=5)
+# Frame para el texto con scroll
+frame_resultado = ttk.Frame(ventana)
+frame_resultado.pack(pady=5, fill="both", expand=True)
+
+resultado_textbox = tk.Text(frame_resultado, wrap="word", height=20, bg="#FFF0F0", relief="solid")
+resultado_textbox.pack(side="left", fill="both", expand=True)
+
+scrollbar = ttk.Scrollbar(frame_resultado, command=resultado_textbox.yview)
+scrollbar.pack(side="right", fill="y")
+
+resultado_textbox.config(yscrollcommand=scrollbar.set)
 
 btn_guardar = ttk.Button(ventana, text="Guardar resultado", command=guardar_resultado, bootstyle="primary")
 btn_guardar.pack(pady=10)
