@@ -2,11 +2,10 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox
 import tkinter as tk
-import minizinc
+import io
 from minizinc import Model, Solver, Instance
 from utils.input_handler import read_input
 
-# Funciones de la interfaz
 def seleccionar_archivo():
     archivo = filedialog.askopenfilename(
         title="Seleccionar archivo de entrada",
@@ -31,31 +30,71 @@ def ejecutar_solver():
         return
 
     try:
-        datos = read_input(archivo_entrada)
+        data = read_input("input.txt")
 
-        modelo = minizinc.Model("models/final_models.mzn")
-        modelo.add_file("models/utils/profit_function.mzn")
+        num_of_established = data["num_of_established"]
+        x_coordinates = data["x_coordinates"]
+        y_coordinates = data["y_coordinates"]
+        n = data["n"]
+        population_segment = data["population_segment"]
+        business_environment = data["business_environment"]
+        num_programs = data["num_programs"]
+
+        initial_model = Model("models/initial_profit.mzn")  
 
         solver = Solver.lookup(solver_nombre.lower())
         if solver is None:
             messagebox.showerror("Error", f"No se encontró el solver: {solver_nombre}")
             return
-        instancia = Instance(solver, modelo)
+        initial_instance = Instance(solver, initial_model)
 
-        instancia["num_of_established"] = datos["num_of_established"]
-        instancia["x_coordinates"] = datos["x_coordinates"]
-        instancia["y_coordinates"] = datos["y_coordinates"]
-        instancia["n"] = datos["n"]
-        instancia["population_segment"] = datos["population_segment"]
-        instancia["business_environment"] = datos["business_environment"]
-        instancia["num_programs"] = datos["num_programs"]
+        initial_instance["num_of_established"] = num_of_established
+        initial_instance["x_coordinates"] = x_coordinates
+        initial_instance["y_coordinates"] = y_coordinates
+        initial_instance["n"] = n
+        initial_instance["population_segment"] = population_segment
+        initial_instance["business_environment"] = business_environment
+        initial_instance["num_programs"] = num_programs
 
-        resultado = instancia.solve()
+        initial_result = initial_instance.solve()
 
-        if resultado.status is not None:
-            resultado_text.set(str(resultado.solution))
-            resultado_textbox.delete(1.0, tk.END)  # Limpiar el texto anterior
-            resultado_textbox.insert(tk.END, str(resultado.solution))  # Mostrar el nuevo resultado
+        final_model = Model("models/final_models.mzn")
+        for ejecucion in range(num_programs):
+            final_instance = Instance(solver, final_model)
+
+            final_instance["num_of_established"] = num_of_established
+            final_instance["x_coordinates"] = x_coordinates
+            final_instance["y_coordinates"] = y_coordinates
+            final_instance["n"] = n
+            final_instance["population_segment"] = population_segment
+            final_instance["business_environment"] = business_environment
+            final_instance["num_programs"] = num_programs
+
+            final_result = final_instance.solve()
+
+            temp_output = io.StringIO()
+            temp_output.write(str(final_result))
+
+            temp_output.seek(0)
+            temp_lines = temp_output.readlines()
+
+            last_line = temp_lines.pop(-1)
+            values = last_line.split()
+            if len(values) == 2:
+                value1, value2 = values
+
+            temp_output.close()
+
+            x_coordinates.extend([int(value1)])
+            y_coordinates.extend([int(value2)])
+            num_of_established += 1
+        
+        if initial_result.status is not None and final_result.status is not None:
+            resultado_text.set(str(initial_result.solution))
+            resultado_text.set(str(final_result.solution))
+            resultado_textbox.delete(1.0, tk.END)  
+            resultado_textbox.insert(tk.END, str(initial_result.solution))  
+            resultado_textbox.insert(tk.END, str(final_result.solution))  
         else:
             messagebox.showinfo("Sin solución", "No se encontró una solución para los datos proporcionados.")
     except Exception as e:
@@ -75,7 +114,7 @@ def guardar_resultado():
         except Exception as e:
             messagebox.showerror("Error", f"Ocurrió un error al guardar el archivo: {e}")
 
-# Configuración de la ventana principal
+
 ventana = ttk.Window(themename="journal")
 ventana.title("Interfaz MiniZinc")
 ventana.geometry("1000x800")
@@ -105,7 +144,6 @@ btn_ejecutar.pack(pady=10)
 lbl_resultado = ttk.Label(ventana, text="Resultado:", bootstyle="secondary")
 lbl_resultado.pack(pady=5)
 
-# Frame para el texto con scroll
 frame_resultado = ttk.Frame(ventana)
 frame_resultado.pack(pady=5, fill="both", expand=True)
 
