@@ -2,7 +2,7 @@ include "utils/profit_function.mzn";
 include "model_variables.mzn";
 include "utils/contiguous_coordinates.mzn";
 
-array[1..num_of_established] of int: initial_profit = [
+array[1..num_of_established] of int: final_profit = [
     get_profit_coordinate(x_coordinates[i], y_coordinates[i], n, population_segment, business_environment) | i in 1..num_of_established
 ];
 
@@ -19,23 +19,28 @@ array[0..n-1, 0..n-1] of var int: candidate_profit =
         | i, j in 0..n-1
     ]);
 
+var int: max_profit = max([candidate_profit[i, j] | i, j in 0..n-1]);
+
+var int: max_i;
+var int: max_j;
+
+constraint
+    exists(i, j in 0..n-1) (
+        candidate_profit[i, j] == max_profit /\
+        max_i == i /\
+        max_j == j
+    );
+
 constraint
     forall(i in 0..n-1, j in 0..n-1) (
         (get_restrictions(i, j, n, population_segment, matrix_locations) >= 25
         /\ get_restrictions(i, j, n, business_environment, matrix_locations) >= 20) -> valid_coords[i, j] == true
     );
 
+solve satisfy;
+
 output [
-    "1. Ganancia total: " ++ show(sum(initial_profit)) ++ "\n" ++
-    "2. Ganancias potenciales de las coordenadas válidas:\n" ++
-    concat([ if fix(candidate_profit[i,j]) > 0 then show(i) ++ " " ++ show(j) ++ " " ++ show(candidate_profit[i,j]) ++ "\n" else "" endif | i in 0..n-1, j in 0..n-1]) ++
-    "3. Coordenadas de localizaciones anteriores:\n" ++
-    concat([ show(x_coordinates[i]) ++ " " ++ show(y_coordinates[i]) ++ "\n" | i in 1..num_of_established]) ++ 
-    "4. Localizaciones predeterminadas:\n" ++
-    concat([ show(matrix_locations[i,j]) ++ if j == n-1 then "\n" else " " endif | i in 0..n-1, j in 0..n-1]) ++
-    "5. coordenadas que cumplen la restricción:\n"] ++
-    [if fix(valid_coords[i, j]) then show(i) ++ " " ++ show(j) ++ "\n" else "" endif | i in 0..n-1, j in 0..n-1] ++
-    ["\n"];
-
-
-
+    show(sum(final_profit) + get_profit_coordinate(fix(max_i), fix(max_j), n, population_segment, business_environment)) ++ "\n" ++
+    concat([ show(x_coordinates[i]) ++ " " ++ show(y_coordinates[i]) ++ "\n" | i in 1..num_of_established]) ++
+    show(fix(max_i)) ++ " " ++ show(fix(max_j)) ++ "\n"
+];
