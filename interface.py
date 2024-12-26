@@ -1,3 +1,8 @@
+"""
+Pedro Bernal Londoño - 2259548
+Jota Emilio Lopez Ramirez - 2259394
+Esmeralda Rivas Guzmán - 2259580
+"""
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox

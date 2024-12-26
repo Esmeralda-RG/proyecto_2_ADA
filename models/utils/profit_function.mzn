@@ -1,3 +1,8 @@
+/*
+Pedro Bernal Londoño - 2259548
+Jota Emilio Lopez Ramirez - 2259394
+Esmeralda Rivas Guzmán - 2259580
+*/
 function int: get_profit_coordinate(int: x, int: y, int: n, array[0..n-1, 0..n-1] of int: population_segment, array[0..n-1, 0..n-1] of int: business_environment) =
     let {
         int: up = if x > 0 then population_segment[x-1, y] + business_environment[x-1, y] else 0 endif,
