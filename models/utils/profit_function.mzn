@@ -1,4 +1,12 @@
 /**
+ * Authors:
+ * - Pedro Bernal Londoño - 2259548
+ * - Jota Emilio Lopez Ramirez - 2259394
+ * - Esmeralda Rivas Guzmán - 2259580
+ */
+
+
+/**
  * Calculates the profit for a given coordinate (x, y) in a grid.
  *
  * @param x The x-coordinate in the grid.

@@ -26,6 +26,11 @@
  * - The total profit including the new location.
  * - The coordinates of the established locations.
  * - The coordinates of the new optimal location.
+ *
+ * Authors:
+ * - Pedro Bernal Londoño - 2259548
+ * - Jota Emilio Lopez Ramirez - 2259394
+ * - Esmeralda Rivas Guzmán - 2259580
  */
 include "utils/profit_function.mzn";
 include "model_variables.mzn";

@@ -20,7 +20,3 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Tambien debe descargar e instalar los solvers de Minizinc.
-
-``
-

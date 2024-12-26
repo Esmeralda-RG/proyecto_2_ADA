@@ -12,6 +12,11 @@
  * 
  * Output:
  * - The model outputs the sum of the initial profits for all established entities.
+ *
+ * Authors:
+ * - Pedro Bernal Londoño - 2259548
+ * - Jota Emilio Lopez Ramirez - 2259394
+ * - Esmeralda Rivas Guzmán - 2259580
  */
 include "utils/profit_function.mzn";
 include "model_variables.mzn";

@@ -20,6 +20,10 @@
  * - If the element diagonally bottom-right `loc[i+1, j+1] == 1` (if `i < n-1` and `j < n-1`)
  *
  * If any of these conditions are met, the corresponding element in the returned array is set to 1.
+ * Authors:
+ * - Pedro Bernal Londoño - 2259548
+ * - Jota Emilio Lopez Ramirez - 2259394
+ * - Esmeralda Rivas Guzmán - 2259580
  */
 function array[int, int] of int: mark_contiguous(array[int, int] of int: loc) =
     array2d(0..n-1, 0..n-1, [
