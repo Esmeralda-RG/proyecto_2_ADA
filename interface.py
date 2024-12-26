@@ -59,7 +59,8 @@ def ejecutar_solver():
         initial_result = initial_instance.solve()
 
         final_model = Model("models/final_models.mzn")
-        for ejecucion in range(num_programs):
+        previous_result = None
+        for execution in range(num_programs):
             final_instance = Instance(solver, final_model)
 
             final_instance["num_of_established"] = num_of_established
@@ -71,6 +72,12 @@ def ejecutar_solver():
             final_instance["num_programs"] = num_programs
 
             final_result = final_instance.solve()
+
+            if final_result.solution is None:
+                final_result = previous_result
+                break
+
+            previous_result = final_result
 
             temp_output = io.StringIO()
             temp_output.write(str(final_result))
