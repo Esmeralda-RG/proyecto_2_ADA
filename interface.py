@@ -1,3 +1,8 @@
+"""
+Pedro Bernal Londoño - 2259548
+Jota Emilio Lopez Ramirez - 2259394
+Esmeralda Rivas Guzmán - 2259580
+"""
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox
@@ -18,9 +23,6 @@ def ejecutar_solver():
     solver_nombre = solver_var.get()
     archivo_entrada = entrada_var.get()
 
-    print(f"Archivo de entrada: {entrada_var.get()}")
-    print(f"Solver seleccionado: {solver_var.get()}")
-
     if not archivo_entrada:
         messagebox.showwarning("Advertencia", "Seleccione un archivo de entrada.")
         return
@@ -29,8 +31,11 @@ def ejecutar_solver():
         messagebox.showwarning("Advertencia", "Seleccione un solver.")
         return
 
+    lbl_estado["text"] = f"Ejecutando el solver '{solver_nombre}'..."
+    ventana.update()
+
     try:
-        data = read_input("input.txt")
+        data = read_input(archivo_entrada)
 
         num_of_established = data["num_of_established"]
         x_coordinates = data["x_coordinates"]
@@ -41,7 +46,6 @@ def ejecutar_solver():
         num_programs = data["num_programs"]
 
         initial_model = Model("models/initial_profit.mzn")  
-
         solver = Solver.lookup(solver_nombre.lower())
         if solver is None:
             messagebox.showerror("Error", f"No se encontró el solver: {solver_nombre}")
@@ -74,7 +78,6 @@ def ejecutar_solver():
 
             temp_output = io.StringIO()
             temp_output.write(str(final_result))
-
             temp_output.seek(0)
             temp_lines = temp_output.readlines()
 
@@ -84,21 +87,21 @@ def ejecutar_solver():
                 value1, value2 = values
 
             temp_output.close()
-
             x_coordinates.extend([int(value1)])
             y_coordinates.extend([int(value2)])
             num_of_established += 1
         
         if initial_result.status is not None and final_result.status is not None:
-            resultado_text.set(str(initial_result.solution))
-            resultado_text.set(str(final_result.solution))
-            resultado_textbox.delete(1.0, tk.END)  
-            resultado_textbox.insert(tk.END, str(initial_result.solution))  
-            resultado_textbox.insert(tk.END, str(final_result.solution))  
+            resultado_textbox.delete(1.0, tk.END)
+            resultado_textbox.insert(tk.END, str(initial_result.solution))
+            resultado_textbox.insert(tk.END, str(final_result.solution))
         else:
             messagebox.showinfo("Sin solución", "No se encontró una solución para los datos proporcionados.")
     except Exception as e:
         messagebox.showerror("Error", f"Ocurrió un error al ejecutar el modelo: {e}")
+    finally:
+        lbl_estado["text"] = "Proceso terminado."
+        ventana.update()
 
 def guardar_resultado():
     archivo_salida = filedialog.asksaveasfilename(
@@ -113,7 +116,6 @@ def guardar_resultado():
             messagebox.showinfo("Guardado exitoso", "El resultado se guardó en: " + archivo_salida)
         except Exception as e:
             messagebox.showerror("Error", f"Ocurrió un error al guardar el archivo: {e}")
-
 
 ventana = ttk.Window(themename="journal")
 ventana.title("Interfaz MiniZinc")
@@ -135,11 +137,14 @@ btn_seleccionar.pack(pady=5)
 lbl_solver = ttk.Label(ventana, text="Seleccionar solver:", bootstyle="secondary")
 lbl_solver.pack(pady=5)
 
-solver_combobox = ttk.Combobox(ventana, textvariable=solver_var, values=["Gecode", "Chuffed", "CP-SAT"], bootstyle="info")
+solver_combobox = ttk.Combobox(ventana, textvariable=solver_var, values=["Chuffed", "CP-SAT", "Gecode"], bootstyle="info")
 solver_combobox.pack(pady=5)
 
 btn_ejecutar = ttk.Button(ventana, text="Ejecutar", command=ejecutar_solver, bootstyle="primary")
 btn_ejecutar.pack(pady=10)
+
+lbl_estado = ttk.Label(ventana, text="", bootstyle="info")
+lbl_estado.pack(pady=5)
 
 lbl_resultado = ttk.Label(ventana, text="Resultado:", bootstyle="secondary")
 lbl_resultado.pack(pady=5)
