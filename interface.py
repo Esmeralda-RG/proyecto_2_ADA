@@ -137,7 +137,7 @@ btn_seleccionar.pack(pady=5)
 lbl_solver = ttk.Label(ventana, text="Seleccionar solver:", bootstyle="secondary")
 lbl_solver.pack(pady=5)
 
-solver_combobox = ttk.Combobox(ventana, textvariable=solver_var, values=["Gecode", "Chuffed", "CP-SAT"], bootstyle="info")
+solver_combobox = ttk.Combobox(ventana, textvariable=solver_var, values=["Chuffed", "CP-SAT", "Gecode"], bootstyle="info")
 solver_combobox.pack(pady=5)
 
 btn_ejecutar = ttk.Button(ventana, text="Ejecutar", command=ejecutar_solver, bootstyle="primary")
