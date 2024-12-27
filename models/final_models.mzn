@@ -1,37 +1,36 @@
-/*
- * This MiniZinc model is designed to optimize the placement of business locations based on various constraints and profit calculations.
- * 
- * Includes:
- * - "utils/profit_function.mzn": Contains the function to calculate profit based on coordinates.
- * - "model_variables.mzn": Contains the model variables.
- * - "utils/contiguous_coordinates.mzn": Contains the function to mark contiguous coordinates.
- * 
- * Variables:
- * - final_profit: An array storing the profit for each established location.
- * - initial_location: A 2D array representing the initial locations of the businesses.
- * - matrix_locations: A 2D array marking contiguous locations.
- * - valid_coords: A 2D array of boolean variables indicating valid coordinates based on restrictions.
- * - candidate_profit: A 2D array of integer variables representing the candidate profit for each coordinate.
- * - max_profit: An integer variable representing the maximum profit among candidate profits.
- * - max_i, max_j: Integer variables representing the coordinates of the maximum profit location.
- * 
- * Constraints:
- * - Ensures that there exists a coordinate (i, j) where the candidate profit equals the maximum profit and assigns these coordinates to max_i and max_j.
- * - Ensures that valid coordinates meet the minimum restrictions for population segment and business environment.
- * 
- * Objective:
- * - The model aims to satisfy the constraints and find the optimal placement of business locations.
- * 
- * Output:
- * - The total profit including the new location.
- * - The coordinates of the established locations.
- * - The coordinates of the new optimal location.
- *
- * Authors:
- * - Pedro Bernal Londoño - 2259548
- * - Jota Emilio Lopez Ramirez - 2259394
- * - Esmeralda Rivas Guzmán - 2259580
- */
+% This MiniZinc model is designed to optimize the placement of business locations based on various constraints and profit calculations.
+% 
+% Includes:
+% - "utils/profit_function.mzn": Contains the function to calculate profit based on coordinates.
+% - "model_variables.mzn": Contains the model variables.
+% - "utils/contiguous_coordinates.mzn": Contains the function to mark contiguous coordinates.
+% 
+% Variables:
+% - final_profit: An array storing the profit for each established location.
+% - initial_location: A 2D array representing the initial locations of the businesses.
+% - matrix_locations: A 2D array marking contiguous locations.
+% - valid_coords: A 2D array of boolean variables indicating valid coordinates based on restrictions.
+% - candidate_profit: A 2D array of integer variables representing the candidate profit for each coordinate.
+% - max_profit: An integer variable representing the maximum profit among candidate profits.
+% - max_i, max_j: Integer variables representing the coordinates of the maximum profit location.
+% 
+% Constraints:
+% - Ensures that there exists a coordinate (i, j) where the candidate profit equals the maximum profit and assigns these coordinates to max_i and max_j.
+% - Ensures that valid coordinates meet the minimum restrictions for population segment and business environment.
+% 
+% Objective:
+% - The model aims to satisfy the constraints and find the optimal placement of business locations.
+% 
+% Output:
+% - The total profit including the new location.
+% - The coordinates of the established locations.
+% - The coordinates of the new optimal location.
+%
+% Authors:
+% - Pedro Bernal Londoño - 2259548
+% - Jota Emilio Lopez Ramirez - 2259394
+% - Esmeralda Rivas Guzmán - 2259580
+
 include "utils/profit_function.mzn";
 include "model_variables.mzn";
 include "utils/contiguous_coordinates.mzn";
